@@ -53,7 +53,7 @@ Plug 'steinymity/minibufexpl.vim'
 Plug 'wesQ3/vim-windowswap'
 " Go to source window, <leader>ww, go to other window, <leader>ww
 
-Plug 'edkolev/tmuxline.vim'
+"Plug 'edkolev/tmuxline.vim'
 Plug 'micbou/a.vim'
 Plug 'chrisbra/csv.vim'
 
@@ -128,7 +128,7 @@ Plug 'oplatek/Conque-Shell', { 'on': [ 'ConqueTerm', 'ConqueTermSplit', 'ConqueT
 Plug 'vim-scripts/deb.vim'
 " browse deb archives
 
-Plug 'vim-scripts/Colour-Sampler-Pack'
+Plug 'altercation/vim-colors-solarized'
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -154,6 +154,16 @@ Plug 'vim-scripts/sgmlendtag'
 
 Plug 'vim-scripts/netrw.vim'
 " Edit files remotely
+
+Plug 'vim-scripts/ScreenShot'
+" Take screenshots from vim
+"  :ScreenShot -- to make screenshot itself
+"  :Text2Html -- to generate HTML code for syntax highlighting
+"  :Diff2Html -- to display two files comparing with differencies highlighted
+
+Plug 'powerman/vim-plugin-AnsiEsc'
+" Interpret ANSI escape codes
+"  :AnsiEsc
 
 " Initialize plugin system
 call plug#end()
@@ -248,6 +258,12 @@ if has("persistent_undo")
     set undolevels=1000         " How many undos
     set undoreload=10000        " number of lines to save for undo
 endif
+
+" Swap/backup dir
+let myswapdir = expand(vim_dir . '/swap')
+call system('mkdir -p ' . myswapdir)
+let &directory = myswapdir
+let &backupdir = myswapdir
 
 "------------------------------------------------------------
 " Functions
@@ -352,15 +368,20 @@ vmap <silent> <F6> <Esc><F6>gv
 imap <silent> <F6> <c-o><F6>
 
 "" Folding
-inoremap <silent> <F9> <C-O>za
-nnoremap <silent> <F9> za
-onoremap <silent> <F9> <C-C>za
-vnoremap <silent> <F9> zf
-inoremap <silent> <F8> <C-O>zfa}
-nnoremap <silent> <F8> zfa}
-onoremap <silent> <F8> <C-C>zfa}
+inoremap <silent> <F8> <C-O>za
+nnoremap <silent> <F8> za
+onoremap <silent> <F8> <C-C>za
 vnoremap <silent> <F8> zf
+inoremap <silent> <C-F8> <C-O>zfa}
+nnoremap <silent> <C-F8> zfa}
+onoremap <silent> <C-F8> <C-C>zfa}
+vnoremap <silent> <C-F8> zf
 set foldcolumn=1
+
+" F9 - Make
+nnoremap <silent> <F9> :w<bar>:Make<cr>
+vmap <silent> <F9> <Esc><F9>gv
+imap <silent> <F9> <c-o><F9>
 
 "" Registers
 " see http://vim.wikia.com/wiki/Comfortable_handling_of_registers
@@ -569,13 +590,30 @@ autocmd FileType cpp set keywordprg=cppman
 "" vebugger
 let g:vebugger_leader='v'
 
+"" ScreenShot
+let ScreenShot = { 'Title':0, 'Credits':0, 'Icon':0 }
+
 "------------------------------------------------------------
 " Colors
 
-" colors-sampler-pack
-let g:airline_theme='dark'
-colorscheme molokai
-hi Special term=bold ctermbg=233 ctermfg=81 gui=italic guifg=#66D9EF guibg=bg
+"" Airline
+"let g:airline_theme='dark'
+"let g:airline_theme='light'
+let g:airline_theme='solarized'
+let g:airline_solarized_bg='dark'
+
+"" Base color
+" solarized
+let g:solarized_italic=0
+set background=dark
+"set background=light
+colorscheme solarized
+
+"" Switch color schemes on the fly
+"noremap <Leader>sl :AirlineTheme light<bar>:set background=light<cr>
+"noremap <Leader>sd :AirlineTheme dark<bar>:set background=dark<cr>
+noremap <Leader>sl :let g:airline_solarized_bg='light'<bar>:AirlineRefresh<bar>:set background=light<cr>
+noremap <Leader>sd :let g:airline_solarized_bg='dark'<bar>:AirlineRefresh<bar>:set background=dark<cr>
 
 "MiniBufExpl Colors
 hi link MBENormal                   airline_b_inactive
